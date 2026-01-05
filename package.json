@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "start": "bun run src/index.ts",
+    "watch": "bun --watch src/index.ts",
     "debug": "bun --inspect src/index.ts"
   },
   "devDependencies": {

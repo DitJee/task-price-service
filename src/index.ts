@@ -1,18 +1,16 @@
+import { createPriceController, createPriceHistoricalController } from "./api/price.controller";
+import { createAppContext } from "./context/app.context";
+
+const ctx = createAppContext();
+const handler_price = createPriceController(ctx);
+const handler_price_historical = createPriceHistoricalController(ctx);
 
 const server = Bun.serve({
     port: 3000,
     routes: {
         "/": () => new Response('Bun is FUN!'),
-        "/price/:symbol": (req) => {
-            // TODO: link controller
-            return new Response(`price for symbol: ${req.params.symbol}`);
-        },
-        "/price/historical/:symbol": (req) => {
-            // TODO: link controller
-            const url = new URL(req.url);
-            const timestamp = url.searchParams.get("timestamp");
-            return new Response(`price for symbol: ${req.params.symbol} with timestamp of ${timestamp}`);
-        }
+        "/price/:symbol": handler_price,
+        "/price/historical/:symbol": handler_price_historical
     },
     fetch() {
         return new Response("unmatched route");
