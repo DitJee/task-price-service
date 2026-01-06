@@ -8,8 +8,8 @@ export interface CacheEntry {
 export class PriceCache {
     private store = new Map<string, CacheEntry>();
     private readonly ttl_ms: number = 0;
-    constructor() {
-        this.ttl_ms = CACHE_TTL_MS;
+    constructor(ttl_ms_?: number) {
+        this.ttl_ms = ttl_ms_ ?? CACHE_TTL_MS;
     }
 
     get(key: string): number | null {
