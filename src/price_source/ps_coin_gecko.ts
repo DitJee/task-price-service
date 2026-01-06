@@ -47,6 +47,8 @@ export class PS_CoinGecko implements PriceSource {
             throw new HttpError(502, `${this.name} returned invalid historical price`);
         }
 
+        console.log(`${this.name}[getHistoricalPrice] price : `, price);
+
         return price;
     }
 
