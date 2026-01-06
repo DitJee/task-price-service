@@ -1,0 +1,1 @@
+export const SUPPORTED_TOKENS: string[] = ["BTC", "ETH", "USDC"];

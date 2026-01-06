@@ -1,16 +1,15 @@
+import { mainHandler } from "./api/handler";
 import { createPriceController, createPriceHistoricalController } from "./api/price.controller";
 import { createAppContext } from "./context/app.context";
 
 const ctx = createAppContext();
-const handler_price = createPriceController(ctx);
-const handler_price_historical = createPriceHistoricalController(ctx);
 
 const server = Bun.serve({
     port: 3000,
     routes: {
         "/": () => new Response('Bun is FUN!'),
-        "/price/:symbol": handler_price,
-        "/price/historical/:symbol": handler_price_historical
+        "/price/:symbol": mainHandler(createPriceController(ctx)),
+        "/price/historical/:symbol": mainHandler(createPriceHistoricalController(ctx))
     },
     fetch() {
         return new Response("unmatched route");

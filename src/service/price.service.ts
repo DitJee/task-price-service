@@ -1,3 +1,4 @@
+import { HttpError } from "../model/http_error";
 import type { AggregatedPrice } from "../model/price";
 import type { PriceSource } from "../price_source/price_source";
 import { median } from "../util/math";
@@ -40,7 +41,7 @@ export class PriceService {
         }
 
         if (prices.length == 0) {
-            throw new Error("All price sources failed!!!");
+            throw new HttpError(500, "All price sources failed!!!");
         }
 
         const aggPrice = median(prices);
