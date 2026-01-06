@@ -38,6 +38,9 @@ export class PriceService {
             if (res.status == "fulfilled") {
                 prices.push(res.value);
             }
+            else {
+                console.warn(res.reason);
+            }
         }
 
         if (prices.length == 0) {

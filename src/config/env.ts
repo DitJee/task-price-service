@@ -17,5 +17,7 @@ const parseNumber = (value: string): number => {
 export const ENV = {
     COINGECKO_API_URL: requireEnv("COINGECKO_API_URL"),
     CRYPTOCOMPARE_API_URL: requireEnv("CRYPTOCOMPARE_API_URL"),
+    COINMARKETCAP_API_URL: requireEnv("COINMARKETCAP_API_URL"),
+    COINMARKETCAP_API_KEY: requireEnv("COINMARKETCAP_API_KEY"),
     MAX_HISTORY_NUM_DAY: parseNumber(requireEnv("MAX_HISTORY_NUM_DAY"))
 };
