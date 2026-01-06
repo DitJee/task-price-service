@@ -102,6 +102,20 @@ bun test
 The service is designed to run inside Docker.
 This allows easy deployment to cloud platforms or orchestration systems.
 
+Since this is a simple service, a single `Dockerfile` is more than enough.
+To run this service inside a container, build it as followed:
+
+```bash
+cd {repo_root}
+docker build -t task-price-service .
+```
+
+once the build is complete, run it using:
+
+```bash
+docker run -p 3000:3000 task-price-service
+```
+
 ## Future Improvements
 
 - Feature flag for different strategy
