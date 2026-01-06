@@ -1,3 +1,4 @@
+import { PriceCache } from "../cache/price_cache";
 import type { PriceSource } from "../price_source/price_source";
 import { PS_CoinGecko } from "../price_source/ps_coin_gecko";
 import { PS_CoinMarketCap } from "../price_source/ps_coin_market_cap";
@@ -14,7 +15,8 @@ export function createAppContext(): AppContext {
         new PS_CryptoCompare(),
         new PS_CoinMarketCap()
     ];
-    const priceService = new PriceService(sources)
+    const priceCache = new PriceCache();
+    const priceService = new PriceService(sources, priceCache)
     return {
         priceService
     }

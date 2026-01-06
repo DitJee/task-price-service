@@ -1,0 +1,1 @@
+export const CACHE_TTL_MS = 60_000;

@@ -1,7 +1,8 @@
+import type { PriceCache } from "../cache/price_cache";
 import { HttpError } from "../model/http_error";
 import type { AggregatedPrice } from "../model/price";
 import type { PriceSource } from "../price_source/price_source";
-import { median } from "../util/math";
+import { median, robustMedian } from "../util/math";
 import { nowUnix } from "../util/time";
 
 
@@ -11,8 +12,11 @@ enum EPriceQueryType {
 }
 export class PriceService {
     private readonly priceSources: PriceSource[];
-    constructor(priceSources_: PriceSource[]) {
+    private readonly priceCache: PriceCache;
+
+    constructor(priceSources_: PriceSource[], priceCache_: PriceCache) {
         this.priceSources = priceSources_;
+        this.priceCache = priceCache_;
     }
 
     async getCurrentPrice(symbol: string): Promise<AggregatedPrice> {
@@ -24,6 +28,17 @@ export class PriceService {
     }
 
     private async getAggrePrice(symbol: string, timestamp: number, queryType: EPriceQueryType): Promise<AggregatedPrice> {
+        // not sure how sure current price query should be handled
+        // I will just have it misses the cache for now
+        const cacheKey = `${symbol}_${timestamp}`;
+        const cache = this.priceCache.get(cacheKey);;
+        if (cache) {
+            // console.log("cache: ", cache)
+            return {
+                priceUSD: cache, symbol, timestamp
+            }
+        }
+
         const results = await Promise.allSettled(
             this.priceSources.map(
                 (src) =>
@@ -47,7 +62,9 @@ export class PriceService {
             throw new HttpError(500, "All price sources failed!!!");
         }
 
-        const aggPrice = median(prices);
+        const aggPrice = robustMedian(prices);
+
+        this.priceCache.set(cacheKey, aggPrice);
 
         console.log("[PriceService][getAggrePrice] aggPrice : ", aggPrice);
 
