@@ -1,15 +1,111 @@
-# task-price-service
+# Aggregated Crypto Price Service
 
-To install dependencies:
+## Overview
 
-```bash
-bun install
+This service provides aggregated crypto currency price data by querying market data from multiple providers and returning a single reliable price data.
+
+### Features:
+
+- **Current price**: return the current price of the token.
+- **Historical price**: return the price at at given point in time (up to 7 days). If timestamp beyond 7 days is given, it will be clamped.
+- **Multi-provider aggregation**: process market data from multiple provider and return a reliable price data
+- **Data staleness**: maximum data staleness of 1 minute
+
+## API Endpoints
+
+### Get current price
+
+```
+GET /price/{tokenSymbol}
 ```
 
-To run:
+### Get historical price
 
-```bash
-bun run index.ts
+```
+GET /price/historical/{tokenSymbol}?timestamp={epochUnixTimestamp}
 ```
 
-This project was created using `bun init` in bun v1.3.5. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+## Architecture Overview
+
+```
+Controller: Input validation
+   ↓
+PriceService: Core business logics
+   ↓
+PriceSource: Handle each provider operations
+   ↓
+External APIs
+```
+
+At its core, [Bun](https://bun.com/docs/runtime) is chosen as the runtime of this service. It is designed to start fast and run fast, which is ideal for a service like ours.
+
+For the program flow, the `Controller` acts as a handler, which responsibles for validating the input from the request. In this case, it just check whether the given symbol is among those we support.
+
+Next, the payload is forwarded to `PriceService`. It runs core business logics of this service. This includes getting the current and historical price of the given crypto currency. The service run multiple async tasks and wait for them to complete. Once they are done, the data are processed to eliminate potential outliers to increase the reliability of the return data (More on that later). To reduce the number of requests for the same symbol and timestamp, a simple key-value map cache is used here.
+
+Lastly, `PriceSource` is used to handle all external provider interactions. Each providers has different schema and ways of requesting data. So, we have to individually handle each differently. This execution is simple. It essentially just a simple fetch call to the endpoint.
+
+## Outlier Rejection Strategy
+
+Since we are working with data from multiple providers, there is always a chance for some of them to be inaccurate. So, we need to find a way to compensate for an error.
+
+To do such task, the a statistical filtering method, Interquartile Range (IQR), is applied to the queried data.
+
+IQR is a robust way to detect and remove outliers based on the middle 50% of data.
+
+- Q1 (25th percentile): lower quartile
+- Q3 (75th percentile): upper quartile
+- IQR = Q3 − Q1
+
+Outlier rule:
+
+- Lower bound = Q1 − 1.5 × IQR
+- Upper bound = Q3 + 1.5 × IQR
+
+Any data point outside these bounds is considered an outlier.
+
+This method is chosen because of these traits:
+
+- Resistant to extreme values
+- Works well for skewed distributions
+- Simple and distribution-free
+
+## Caching Strategy
+
+For now, a simple in-memory cache is used to:
+
+- Enforce 1-minute staleness
+- Reduce repeated external API calls
+- Improve latency for hot symbols
+
+Cache keys include:
+
+- Symbol
+- Timestamp (for historical queries)
+
+## Tests
+
+For simplicity, [bun test runner](https://bun.com/docs/test) is used to do unit testing. Currently, the test covers:
+
+- Controller: price controller
+- Service: price service
+- Math: statistic opeations
+
+The test is triggered by running:
+
+```bash
+bun test
+```
+
+## Containerization
+
+The service is designed to run inside Docker.
+This allows easy deployment to cloud platforms or orchestration systems.
+
+## Future Improvements
+
+- Feature flag for different strategy
+- Circuit breaker for failing providers
+- Redis for distributed cache
+- Rate limiting per API key
+- Monitoring service
