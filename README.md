@@ -116,6 +116,27 @@ once the build is complete, run it using:
 docker run -p 3000:3000 task-price-service
 ```
 
+## Github Actions
+
+A simple workflow is setup for this service CI. There are two stages: Test and build.
+
+### Test
+
+In this stage, we verify the build by doing these checks:
+
+1. Check repo
+2. Setup Bun
+3. Install dependencies
+4. Type checking
+5. Run unit tests
+
+### Build
+
+In this stage, we verify the build by doing these checks:
+
+1. Check repo
+2. Docker build
+
 ## Future Improvements
 
 - Feature flag for different strategy
