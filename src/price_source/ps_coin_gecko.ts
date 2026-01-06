@@ -1,12 +1,13 @@
+import { ENV } from "../config/env";
 import type { PriceSource } from "./price_source";
 
-const CoinGecko_Ids: Record<string, string> = {
+const COINGECKO_IDS: Record<string, string> = {
     BTC: "bitcoin",
 };
 
 export class PS_CoinGecko implements PriceSource {
     readonly name = "CoinGecko";
-    readonly url = "https://api.coingecko.com/api/v3"; // TODO: maybe move to config?
+    readonly url = ENV.COINGECKO_API_URL;
     async getCurrentPrice(symbol: string): Promise<number> {
         const id = this.getIdFromSymbol(symbol);
 
@@ -31,7 +32,7 @@ export class PS_CoinGecko implements PriceSource {
 
 
     private getIdFromSymbol(symbol: string): string {
-        const id = CoinGecko_Ids[symbol.toUpperCase()];
+        const id = COINGECKO_IDS[symbol.toUpperCase()];
         if (!id) {
             throw new Error(`[CoinGecko] unsupported symbol ${symbol}`);
         }
