@@ -9,7 +9,9 @@ export const createPriceController = (ctx: AppContext) => {
             throw new HttpError(400, `${symbol} is not supported`);
         }
         const aggPrice = await ctx.priceService.getCurrentPrice(symbol);
-        return new Response(`price for symbol: ${symbol} is ${aggPrice.priceUSD}`);
+        return Response.json({
+            aggPrice
+        });
     }
 }
 
@@ -22,6 +24,8 @@ export const createPriceHistoricalController = (ctx: AppContext) => {
         const url = new URL(req.url);
         const timestamp = Number(url.searchParams.get("timestamp"));
         const aggPrice = await ctx.priceService.getHistoricalPrice(symbol, timestamp);
-        return new Response(`historical price for symbol: ${symbol} with timestamp of ${timestamp} is ${aggPrice.priceUSD}`);
+        return Response.json({
+            aggPrice
+        });
     }
 }
