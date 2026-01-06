@@ -5,6 +5,8 @@ import type { PriceSource } from "./price_source";
 
 const COINGECKO_IDS: Record<string, string> = {
     BTC: "bitcoin",
+    ETH: "ethereum",
+    USDC: "usd-coin",
 };
 
 export class PS_CoinGecko implements PriceSource {
