@@ -11,6 +11,8 @@ This service provides aggregated cryptocurrency price data by querying market da
 - **Multi-provider aggregation**: process market data from multiple providers and return reliable price data
 - **Data staleness**: maximum data staleness of 1 minute
 
+> Currently, the service only supports: `BTC`, `ETH`, and `USDC` symbols.
+
 ## API Endpoints
 
 ### Get current price
