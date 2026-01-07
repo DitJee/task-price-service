@@ -9,24 +9,17 @@ const server = Bun.serve({
     port: ENV.PORT,
     routes: {
         "/": () => new Response('Bun is FUN!'),
-        "/health": () => new Response(
-            JSON.stringify({
-                service: "task-price-service",
-                uptime: process.uptime()
-            }),
-            {
-                status: 200,
-                headers: { "content-type": "application/json" },
-            }
-        ),
+        "/health": () => Response.json({
+            service: ENV.SERVICE_NAME,
+            uptime: process.uptime()
+        }, 200),
         "/price/:symbol": mainHandler(createPriceController(ctx)),
         "/price/historical/:symbol": mainHandler(createPriceHistoricalController(ctx))
     },
     fetch() {
-        return new Response(
-            JSON.stringify({ error: "endpoint not found" }),
-            { status: 404 }
-        );
+        return Response.json({
+            error: "endpoint not found"
+        }, 404);
     }
 });
 
@@ -36,7 +29,7 @@ const shutdown = () => {
     process.exit(0);
 };
 
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown); // interrupt
+process.on("SIGTERM", shutdown); // terminate
 
-console.log(`task-price-service is running on port: ${ENV.PORT} in env: ${ENV.SERVICE_ENV}`);
+console.log(`${ENV.SERVICE_NAME} is running on port: ${ENV.PORT} in env: ${ENV.SERVICE_ENV}`);

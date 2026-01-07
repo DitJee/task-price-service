@@ -15,6 +15,7 @@ const parseNumber = (value: string): number => {
 }
 
 export const ENV = {
+    SERVICE_NAME: requireEnv("SERVICE_NAME"),
     SERVICE_ENV: requireEnv("SERVICE_ENV"),
     PORT: parseNumber(requireEnv("PORT")),
     COINGECKO_API_URL: requireEnv("COINGECKO_API_URL"),
