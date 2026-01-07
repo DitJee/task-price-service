@@ -147,4 +147,4 @@ In this stage, we verify the build by doing these checks:
 - Rate limiting per API key
 - Monitoring service
 - Better log structure
-- [For real production] move all secrets and env vars to repo's variable/secret storage and read and write it into .env file in deployment pipeline
+- _[For real production]_ move all secrets and env vars to repo's variable/secret storage and read and write it into .env file in deployment pipeline
