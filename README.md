@@ -144,3 +144,4 @@ In this stage, we verify the build by doing these checks:
 - Redis for distributed cache
 - Rate limiting per API key
 - Monitoring service
+- Better log structure
