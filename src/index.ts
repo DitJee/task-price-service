@@ -9,11 +9,24 @@ const server = Bun.serve({
     port: ENV.PORT,
     routes: {
         "/": () => new Response('Bun is FUN!'),
+        "/health": () => new Response(
+            JSON.stringify({
+                service: "task-price-service",
+                uptime: process.uptime()
+            }),
+            {
+                status: 200,
+                headers: { "content-type": "application/json" },
+            }
+        ),
         "/price/:symbol": mainHandler(createPriceController(ctx)),
         "/price/historical/:symbol": mainHandler(createPriceHistoricalController(ctx))
     },
     fetch() {
-        return new Response("unmatched route");
+        return new Response(
+            JSON.stringify({ error: "endpoint not found" }),
+            { status: 404 }
+        );
     }
 });
 
