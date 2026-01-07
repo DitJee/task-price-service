@@ -1,4 +1,4 @@
-# Aggregated Crypto Price Service
+# Aggregated Price Service
 
 ## Overview
 
